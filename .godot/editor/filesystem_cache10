@@ -1,0 +1,13 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1742434836
+infinite_map.gd::GDScript/GDScript::7854013118215652228::1742434261::0::1::::<>MapManager<><>0<>1<><>::
+::res://resources/::1742258393
+icon.svg::CompressedTexture2D/CompressedTexture2D::2639249448974642665::1741739991::1742258393::1::::<><><>0<>0<>20ff6a57c963acfee027eaae9ab15558<>res://.godot/imported/icon.svg-60a93a01b332c0a9192782f1380f6837.ctex::
+地图格子.svg::CompressedTexture2D/CompressedTexture2D::7494151192382758454::1741832243::1742258393::1::::<><><>0<>0<>d0742a87973fc6dbf833e08c71f07435<>res://.godot/imported/地图格子.svg-be35536dace5d9557458097e91415bd1.ctex::
+::res://scenes/::1742433209
+infinite_map.tscn::PackedScene/PackedScene::3119469772208553941::1742433209::0::1::::<><><>0<>0<><>::uid://dj5spiswa1k7m::::res://infinite_map.gd<>uid://be5576mix0c4b::::res://scripts/camera_controller.gd<>uid://dsyn0s3hyhx0a::::res://scripts/random_icon_manager.gd<>uid://bduqb2cismhvd::::res://resources/icon.svg<>uid://de1hts72xrh3k::::res://resources/地图格子.svg
+::res://scripts/::1742261277
+camera_controller.gd::GDScript/GDScript::2730987693211686939::1742434274::0::1::::CameraController<>Camera2D<><>0<>1<><>::
+debug_grid.gd::GDScript/GDScript::8662232838510992964::1742261384::0::1::::<>Node2D<><>0<>1<><>::
+map_manager.gd::GDScript/GDScript::7972744218334581424::1742432533::0::1::::MapManager<>Node2D<><>0<>1<><>::
+random_icon_manager.gd::GDScript/GDScript::8473041257440155974::1742429592::0::1::::RandomIconManager<>Node2D<>res://icon.svg<>0<>1<><>::
