@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bkpdhgmnpdssb"]
 
-[ext_resource type="Script" uid="uid://dj5spiswa1k7m" path="res://infinite_map.gd" id="1_w2j8q"]
+[ext_resource type="Script" uid="uid://mub16pp6badq" path="res://infinite_map.gd" id="1_w2j8q"]
 [ext_resource type="Script" uid="uid://be5576mix0c4b" path="res://scripts/camera_controller.gd" id="4_xk7nh"]
 [ext_resource type="Script" uid="uid://dsyn0s3hyhx0a" path="res://scripts/random_icon_manager.gd" id="5_y2k8q"]
 [ext_resource type="Texture2D" uid="uid://bduqb2cismhvd" path="res://resources/icon.svg" id="7_a3k8q"]
@@ -10,7 +10,8 @@
 script = ExtResource("1_w2j8q")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(646.585, 749.337)
+position = Vector2(293.547, 141.515)
+scale = Vector2(195.518, -36.6437)
 script = ExtResource("4_xk7nh")
 
 [node name="GridBackground" type="Sprite2D" parent="."]
@@ -22,5 +23,6 @@ texture = ExtResource("8_b3k8q")
 script = ExtResource("5_y2k8q")
 
 [node name="RandomIcon" type="Sprite2D" parent="."]
-position = Vector2(-1171, 410)
+visible = false
+position = Vector2(98, 619)
 texture = ExtResource("7_a3k8q")
