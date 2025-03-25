@@ -92,7 +92,7 @@ func create_icon_at_grid(grid_pos: Vector2) -> bool:
 	
 	# 确保图标可见
 	icon.visible = true
-	icon.modulate.a = 1.0
+	icon.modulate.a = 0.5
 	
 	return true
 
@@ -131,6 +131,7 @@ func _init_random_icon_pool():
 		var new_icon = random_icon_template.duplicate()
 		new_icon.visible = false  # 初始时设置为不可见
 		new_icon.z_index = random_icon_z
+		new_icon.modulate.a = 0.5
 		add_child(new_icon)
 		random_icon_pool.push_back(new_icon)
 
@@ -226,11 +227,11 @@ func update_random_icons_visibility(start_x: int, end_x: int, start_y: int, end_
 				icon.modulate.a = 0.0
 	
 	# 打印调试信息
-	print("随机图标更新信息:")
-	print("可见范围: X(", start_x, " ~ ", end_x, ") Y(", start_y, " ~ ", end_y, ")")
-	print("可见图标数量: ", _visible_count)
-	print("检查总数: ", _total_checked)
-	print("----------------------------------------")
+	#print("随机图标更新信息:")
+	#print("可见范围: X(", start_x, " ~ ", end_x, ") Y(", start_y, " ~ ", end_y, ")")
+	#print("可见图标数量: ", _visible_count)
+	#print("检查总数: ", _total_checked)
+	#print("----------------------------------------")
 
 func remove_random_icon(grid_pos: Vector2):
 	# 直接使用网格坐标

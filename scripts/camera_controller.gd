@@ -25,7 +25,7 @@ var min_zoom = 0.05
 var max_zoom = 2.0
 var zoom_speed = 0.05
 # 缩放插值速度
-var zoom_interpolation_speed = 10.0
+var zoom_interpolation_speed = 9.0
 # 目标缩放值
 var target_zoom = 1.0
 # 是否正在缩放
@@ -33,7 +33,7 @@ var is_zooming = false
 # 缩放更新计时器
 var zoom_update_timer = 0.0
 # 缩放更新间隔
-var zoom_update_interval = 0.15
+var zoom_update_interval = 0.05
 
 signal map_update_requested
 

@@ -1,2 +1,2 @@
-res://scenes/infinite_map.tscn
-res://infinite_map.gd
+res://scripts/random_icon_manager.gd
+res://scripts/camera_controller.gd
