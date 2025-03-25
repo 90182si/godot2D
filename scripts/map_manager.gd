@@ -5,7 +5,7 @@ class_name MapManager
 # 视口大小
 var viewport_size = Vector2.ZERO
 # 图标大小（固定为128）
-var icon_size = 256.0
+var icon_size = 1024.0
 # 基础缓冲区大小
 var base_buffer_size = 1
 # 图标节点引用
@@ -17,11 +17,15 @@ var icons = {}
 # 图标对象池
 var icon_pool = []
 # 对象池大小
-var pool_size = 200000
+var pool_size = 20000
+
+const GRID_SIZE = 64
 
 func _ready():
 	# 隐藏模板图标
 	icon_template.visible = false
+	icon_template.scale = Vector2(4,4)
+	#icon_size = icon_template.texture.get_size().x
 	# 获取视口大小
 	viewport_size = get_viewport_rect().size
 	# 连接窗口大小改变信号
@@ -68,8 +72,8 @@ func update_map():
 	var range_y = base_end_y - base_start_y
 	
 	# 如果范围太大，进行限制
-	if range_x * range_y > pool_size * 1:  # 保留20%的池容量作为缓冲
-		var tmp_scale = sqrt(pool_size * 1 / (range_x * range_y))
+	if range_x * range_y > pool_size * 0.8:  # 保留20%的池容量作为缓冲
+		var tmp_scale = sqrt(pool_size * 0.8 / (range_x * range_y))
 		range_x = floor(range_x * tmp_scale)
 		range_y = floor(range_y * tmp_scale)
 	
@@ -83,8 +87,8 @@ func update_map():
 	var icons_to_remove = icons.duplicate()
 	
 	# 创建需要的图标
-	for x in range(start_x, end_x):
-		for y in range(start_y, end_y):
+	for x in range(start_x/icon_size, end_x/icon_size):
+		for y in range(start_y/icon_size, end_y/icon_size):
 			var pos = Vector2(x, y)
 			new_positions[pos] = true
 			if icons.has(pos):
@@ -95,14 +99,47 @@ func update_map():
 	# 移除不需要的图标
 	for pos in icons_to_remove:
 		remove_icon(pos)
+		
+	# 打印调试信息
+	print("地图更新信息:")
+	print("视野范围: X(", start_x, " ~ ", end_x, ") Y(", start_y, " ~ ", end_y, ")")
+	print("当前显示的图标数量: ", icons.size())
+	print("对象池剩余数量: ", icon_pool.size())
+	print("----------------------------------------")
 
 func create_icon(grid_pos: Vector2):
 	if icon_pool.size() > 0:
 		var icon = icon_pool.pop_back()
 		icon.visible = true
-		icon.position = grid_pos * icon_size
+		icon.position = (grid_pos+Vector2(0.5,0.5))*icon_size
 		icon.modulate.a = 0.5
 		icons[grid_pos] = icon
+		# 检查并更新周围节点的透明度
+		update_icon_opacity(grid_pos)
+
+func update_icon_opacity(grid_pos: Vector2):
+	# 检查上下左右四个方向
+	var directions = [
+		Vector2(0, -1),  # 上
+		Vector2(0, 1),   # 下
+		Vector2(-1, 0),  # 左
+		Vector2(1, 0)    # 右
+	]
+	
+	var adjacent_count = 0
+	for dir in directions:
+		var check_pos = grid_pos + dir
+		if icons.has(check_pos):
+			# 检查该位置是否有RandomIcon节点
+			var icon = icons[check_pos]
+			if icon.has_node("RandomIcon"):
+				adjacent_count += 1
+	
+	# 如果周围RandomIcon节点数量大于等于3，设置透明度为1
+	if adjacent_count >= 3:
+		icons[grid_pos].modulate.a = 1.0
+	else:
+		icons[grid_pos].modulate.a = 0.5
 
 func remove_icon(grid_pos: Vector2):
 	if icons.has(grid_pos):
@@ -110,6 +147,17 @@ func remove_icon(grid_pos: Vector2):
 		icon.visible = false
 		icon_pool.push_back(icon)
 		icons.erase(grid_pos)
+		# 更新周围节点的透明度
+		var directions = [
+			Vector2(0, -1),  # 上
+			Vector2(0, 1),   # 下
+			Vector2(-1, 0),  # 左
+			Vector2(1, 0)    # 右
+		]
+		for dir in directions:
+			var check_pos = grid_pos + dir
+			if icons.has(check_pos):
+				update_icon_opacity(check_pos)
 
 func clear_all_icons():
 	for icon in icons.values():

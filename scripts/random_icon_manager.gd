@@ -13,7 +13,7 @@ var random_icon_template: Sprite2D
 # 随机图标对象池
 var random_icon_pool = []
 # 随机图标对象池大小
-var random_pool_size = 1000
+var random_pool_size = 50000
 # 存储已创建的随机图标
 var random_icons = {}
 # 随机图标生成范围
@@ -47,6 +47,18 @@ func _input(event):
 			
 			# 确保事件不会继续传递
 			get_viewport().set_input_as_handled()
+		#点击左键删除节点
+		if event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+			# 获取鼠标点击的全局位置
+			var click_pos = get_global_mouse_position()
+			
+			# 转换为网格坐标
+			var grid_x = floor(click_pos.x / GRID_SIZE)
+			var grid_y = floor(click_pos.y / GRID_SIZE)
+			var grid_pos = Vector2(grid_x, grid_y)
+			
+			# 删除网格位置的图标
+			remove_random_icon(grid_pos)			
 
 func create_icon_at_grid(grid_pos: Vector2) -> bool:
 	# 检查模板是否有效
@@ -148,6 +160,22 @@ func update_random_icons_visibility(start_x: int, end_x: int, start_y: int, end_
 	var _visible_count = 0
 	var _total_checked = 0
 	
+	# 计算可见范围的大小
+	var visible_range_x = end_x - start_x
+	var visible_range_y = end_y - start_y
+	
+	# 如果可见范围太大，进行限制
+	if visible_range_x * visible_range_y > random_pool_size * 0.8:
+		var tmp_scale = sqrt(random_pool_size * 0.8 / (visible_range_x * visible_range_y))
+		visible_range_x = floor(visible_range_x * tmp_scale)
+		visible_range_y = floor(visible_range_y * tmp_scale)
+		
+		# 调整范围以保持中心点
+		end_x -= visible_range_x/2
+		end_y -= visible_range_y/2
+		start_x = end_x - visible_range_x
+		start_y = end_y - visible_range_y
+	
 	# 遍历所有图标
 	for grid_pos in random_icons:
 		_total_checked += 1
@@ -165,7 +193,26 @@ func update_random_icons_visibility(start_x: int, end_x: int, start_y: int, end_
 		if should_be_visible:
 			_visible_count += 1
 			icon.visible = true
-			icon.modulate.a = 1.0
+			
+			# 检查周围RandomIcon节点数量
+			var directions = [
+				Vector2(0, -1),  # 上
+				Vector2(0, 1),   # 下
+				Vector2(-1, 0),  # 左
+				Vector2(1, 0)    # 右
+			]
+			
+			var adjacent_count = 0
+			for dir in directions:
+				var check_pos = grid_pos + dir
+				if random_icons.has(check_pos):
+					adjacent_count += 1
+			
+			# 如果周围RandomIcon节点数量大于等于3，设置透明度为1
+			if adjacent_count >= 3:
+				icon.modulate.a = 1.0
+			else:
+				icon.modulate.a = 0.5
 			
 			# 确保图标大小正确
 			if icon is Sprite2D:
@@ -177,6 +224,13 @@ func update_random_icons_visibility(start_x: int, end_x: int, start_y: int, end_
 			if icon.visible:
 				icon.visible = false
 				icon.modulate.a = 0.0
+	
+	# 打印调试信息
+	print("随机图标更新信息:")
+	print("可见范围: X(", start_x, " ~ ", end_x, ") Y(", start_y, " ~ ", end_y, ")")
+	print("可见图标数量: ", _visible_count)
+	print("检查总数: ", _total_checked)
+	print("----------------------------------------")
 
 func remove_random_icon(grid_pos: Vector2):
 	# 直接使用网格坐标

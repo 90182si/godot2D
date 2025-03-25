@@ -21,9 +21,9 @@ var min_speed_multiplier = 0.5
 # 最大移动速度倍率
 var max_speed_multiplier = 2.0
 # 缩放限制
-var min_zoom = 0.1
+var min_zoom = 0.05
 var max_zoom = 2.0
-var zoom_speed = 0.1
+var zoom_speed = 0.05
 # 缩放插值速度
 var zoom_interpolation_speed = 10.0
 # 目标缩放值

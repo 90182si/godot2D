@@ -2,7 +2,7 @@
 extends MapManager
 
 # 网格大小常量
-const GRID_SIZE = 64
+
 
 # 相机控制器引用
 @onready var camera_controller = $Camera2D
@@ -85,24 +85,15 @@ func update_map():
 	var zoom = camera_controller.zoom.x
 	var visible_size = viewport_size / zoom
 	
-	# 获取动态缓冲区大小
-	var buffer_size = get_adjusted_buffer_size()
-	
 	# 计算基础范围（增加缓冲区）
-	var base_start_x = floor((cam_pos.x - visible_size.x/2) / GRID_SIZE) - buffer_size
-	var base_end_x = ceil((cam_pos.x + visible_size.x/2) / GRID_SIZE) + buffer_size
-	var base_start_y = floor((cam_pos.y - visible_size.y/2) / GRID_SIZE) - buffer_size
-	var base_end_y = ceil((cam_pos.y + visible_size.y/2) / GRID_SIZE) + buffer_size
+	var base_start_x = floor((cam_pos.x - visible_size.x/2))
+	var base_end_x = ceil((cam_pos.x + visible_size.x/2))
+	var base_start_y = floor((cam_pos.y - visible_size.y/2))
+	var base_end_y = ceil((cam_pos.y + visible_size.y/2))
 	
 	# 计算实际显示范围
 	var range_x = base_end_x - base_start_x
 	var range_y = base_end_y - base_start_y
-	
-	# 如果范围太大，进行限制
-	if range_x * range_y > pool_size * 1:  # 保留20%的池容量作为缓冲
-		var scale_factor = sqrt(pool_size * 1 / (range_x * range_y))
-		range_x = floor(range_x * scale_factor)
-		range_y = floor(range_y * scale_factor)
 	
 	var start_x = base_start_x + (base_end_x - base_start_x - range_x) / 2
 	var end_x = start_x + range_x
@@ -113,9 +104,10 @@ func update_map():
 	var new_positions = {}
 	var icons_to_remove = icons.duplicate()
 	
+	var buffer_size = get_adjusted_buffer_size()
 	# 创建需要的图标
-	for x in range(start_x, end_x):
-		for y in range(start_y, end_y):
+	for x in range(base_start_x/icon_size-1-buffer_size, base_end_x/icon_size+1+buffer_size):
+		for y in range(base_start_y/icon_size-1-buffer_size, base_end_y/icon_size+1+buffer_size):
 			var pos = Vector2(x, y)
 			new_positions[pos] = true
 			if icons.has(pos):
@@ -130,12 +122,12 @@ func update_map():
 	# 在可见区域内随机生成一些图标（如果还没有生成过）
 	if not random_icon_manager.random_icons_generated:
 		print("Generating initial random icons in visible area...")
-		var total_icons = 100  # 先生成一小部分图标测试
+		var total_icons = 500  # 先生成一小部分图标测试
 		var icons_generated = 0
 		
 		while icons_generated < total_icons:
-			var grid_x = randi_range(start_x, end_x - 1)
-			var grid_y = randi_range(start_y, end_y - 1)
+			var grid_x = randi_range(-200,200)
+			var grid_y = randi_range(-200,200)
 			var grid_pos = Vector2(grid_x, grid_y)
 			
 			if random_icon_manager.create_icon_at_grid(grid_pos):
@@ -146,4 +138,8 @@ func update_map():
 		random_icon_manager.random_icons_generated = true
 	
 	# 更新随机图标的可见性
-	random_icon_manager.update_random_icons_visibility(start_x, end_x, start_y, end_y)
+	random_icon_manager.update_random_icons_visibility(
+		start_x/64-buffer_size, 
+		end_x/64+buffer_size, 
+		start_y/64-buffer_size, 
+		end_y/64+buffer_size)
